@@ -1,23 +1,39 @@
 <?php 
   class User_Auth {
-    function __construct($pdo){
+    public function __construct($pdo){
       $this->pdo = $pdo;
     }
-    public function LOGIN(){
+
+    public function REGISTER($email, $password){
+      $q_validate = "SELECT * FROM user WHERE email = ?";
+      $stmt = $this->pdo->prepare($q_validate);
+      $stmt->execute([$email]);
+      $found_user = $stmt->fetch();
+      if (isset($found_user['id'])){
+        echo "<script>alert('user exist! Please login')</script>";
+        return FALSE;
+      } else {
+        $q_add_user = "INSERT INTO user (email, password) VALUE (? , ?)";
+        $stmt = $this->pdo->prepare($q_add_user);
+        $stmt->execute([$email, $password]);
+        $this->LOGIN($email, $password);
+        return TRUE;
+      }
+    }
+
+    public function LOGIN($email, $password){
       // check if there is a user
-      if (isset($_POST['login'])) {
-        $q_login = "SELECT * FROM user WHERE email = ?";
+      $q_login = "SELECT * FROM user WHERE email = ?";
         $stmt = $this->pdo->prepare($q_login);
-        $stmt->execute([$_POST['email']]);
+        $stmt->execute([$email]);
         $found_user = $stmt->fetch();
   
-        if ($_POST['password'] === $found_user['password']){
-          session_start();
-          $_SESSION['current_user_id'] = htmlentities($found_user['id']);
-          $_SESSION['current_user_email'] = htmlentities($found_user['email']);
-        }
-        header('Location: /account');
+      if ($password === $found_user['password']){
+        session_start();
+        $_SESSION['current_user_id'] = htmlentities($found_user['id']);
+        $_SESSION['current_user_email'] = htmlentities($found_user['email']);
       }
+      header('Location: /account');
     }
 
     public function LOGOUT(){

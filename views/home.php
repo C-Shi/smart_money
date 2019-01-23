@@ -3,7 +3,21 @@
   require 'libs/user_auth.php';
 
   $user_auth = new USER_AUTH($pdo);
-  $user_auth->LOGIN();
+
+  if (isset($_POST['login'])){
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $user_auth->LOGIN($email, $password);
+  }
+  if (isset($_POST['register']) && filter_var($_POST['new_email'], FILTER_VALIDATE_EMAIL)){
+    $new_email = $_POST['new_email'];
+    $new_password = $_POST['new_password'];
+    $register_state = $user_auth->REGISTER($new_email, $new_password);
+    if (!$register_state){
+      unset($_POST['new_email']);
+      unset($_POST['new_password']);
+    }
+  }
 ?>
 
 
@@ -46,19 +60,19 @@
       </div>
       <!-- right sign up or login form -->
       <div class="col-md-6">
-        <form>
+        <form method="POST" action="/">
           <fieldset>
             <legend>Register</legend>
             <div class="form-group">
               <label>Email address</label>
-              <input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+              <input type="email" class="form-control" name="new_email" aria-describedby="emailHelp" placeholder="Enter email">
               <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
             </div>
             <div class="form-group">
               <label>Password</label>
-              <input type="password" class="form-control" name="password" placeholder="Password">
+              <input type="password" class="form-control" name="new_password" placeholder="Password">
             </div>
-            <button type="submit" class="btn btn-primary">Register</button>
+            <input type="submit" class="btn btn-primary" value="Register" name="register">
           </fieldset>
         </form>
         <!-- end of register form -->
