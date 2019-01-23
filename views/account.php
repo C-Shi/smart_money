@@ -1,5 +1,12 @@
+<?php include "inc/header.php" ?>
+
 <?php 
-  include "inc/header.php"
+  # PDO query for prepare statment
+  $user_id = 1;
+  $q = 'SELECT * FROM transaction WHERE user_id = ? ORDER BY date DESC';
+  $stmt = $pdo->prepare($q);
+  $stmt->execute([$user_id]);
+  $results = $stmt->fetchAll();
 ?>
 
 <div class="container-fluid bg-secondary" style="margin-bottom: 20px; padding: 10px;">
@@ -54,16 +61,20 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td scope="row">Active</td>
-              <td>Column content</td>
-              <td>Column content</td>
-            </tr>
-            <tr>
-              <td scope="row">Active</td>
-              <td>Column content</td>
-              <td>Column content</td>
-            </tr>
+            <?php foreach($results as $result): ?>
+              <tr>
+                <td scope="row"><?php echo explode(' ', $result['date'])[0]?></td>
+                <td>
+                  <?php
+                    $cat_q = 'SELECT name FROM category WHERE id = ' . $result['category_id'];
+                    $stmt_cat = $pdo->query($cat_q);
+                    $cat_name = $stmt_cat->fetch();
+                    echo $cat_name['name'];
+                  ?>
+                </td>
+                <td><?php echo $result['amount'] ?></td>
+              </tr>
+            <?php endforeach; ?>
           </tbody>
         </table>
       </div>

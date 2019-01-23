@@ -1,3 +1,5 @@
+<?php require "config/db.php" ?>
+
 <!DOCTYPE html>
 <html>
 <head>
