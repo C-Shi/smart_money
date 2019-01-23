@@ -1,5 +1,3 @@
-<?php require "config/db.php" ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,9 +31,12 @@
           <a class="nav-link" href="#">About</a>
         </li>
       </ul>
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="text" placeholder="Search">
-        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      <form class="form-inline my-2 my-lg-0" method="POST" action="/account">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">Welcome! <?php echo $_SESSION['current_user_email']?></li>
+        </ul>
+        &nbsp;
+        <input class="btn btn-secondary my-2 my-sm-0" type="submit" value="Logout" name="logout">
       </form>
     </div>
   </nav>

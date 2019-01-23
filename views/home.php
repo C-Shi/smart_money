@@ -1,3 +1,12 @@
+<?php 
+  require 'config/db.php';
+  require 'libs/user_auth.php';
+
+  $user_auth = new USER_AUTH($pdo);
+  $user_auth->LOGIN();
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,12 +27,12 @@
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav mr-auto">
       </ul>
-      <form class="form-inline my-2 my-lg-0">
+      <form class="form-inline my-2 my-lg-0" method="POST" action="/">
         <label><strong>Email: &nbsp;</strong></label>
         <input class="form-control mr-sm-2" type="email" name="email" placeholder="Email">
         <label><strong>Password: &nbsp;</strong></label>
         <input class="form-control mr-sm-2" type="password" name="password" placeholder="******">
-        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Login</button>
+        <input class="btn btn-secondary my-2 my-sm-0" type="submit" value="Login" name="login">
       </form>
     </div>
   </nav>

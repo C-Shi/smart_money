@@ -1,13 +1,25 @@
-<?php include "inc/header.php" ?>
-
 <?php 
+  require "config/db.php";
+  require "libs/user_auth.php";
   # PDO query for prepare statment
-  $user_id = 1;
-  $q = 'SELECT * FROM transaction WHERE user_id = ? ORDER BY date DESC';
-  $stmt = $pdo->prepare($q);
-  $stmt->execute([$user_id]);
-  $results = $stmt->fetchAll();
+  session_start();
+
+  if(isset($_SESSION['current_user_id'])){
+    $user_id = $_SESSION['current_user_id'];
+    $q = 'SELECT * FROM transaction WHERE user_id = ? ORDER BY date DESC';
+    $stmt = $pdo->prepare($q);
+    $stmt->execute([$user_id]);
+    $results = $stmt->fetchAll();
+  } else {
+    // no current user cannot access account page;
+    header('Location: /');
+  }
+
+  $user_auth = new User_Auth($pdo);
+  $user_auth->LOGOUT();
 ?>
+
+<?php include "inc/header.php" ?>
 
 <div class="container-fluid bg-secondary" style="margin-bottom: 20px; padding: 10px;">
   <div class="container">
