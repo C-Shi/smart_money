@@ -4,6 +4,11 @@
 
   $user_auth = new USER_AUTH($pdo);
 
+  session_start();
+  if($_SESSION['current_user_id']){
+    header('Location: /account');
+  }
+
   if (isset($_POST['login'])){
     $email = $_POST['email'];
     $password = $_POST['password'];

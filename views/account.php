@@ -17,8 +17,8 @@
     $manager = new Manage_Account($pdo);
     $categories = $manager->fetch_user_category($user_id);
 
-    // listen to post request
-    if(isset($_POST['submit'])){
+    // listen to add transaction request
+    if(isset($_POST['add'])){
       // add new category if exist
       $amount = $_POST['amount'];
       if(isset($_POST['newCategory'])){
@@ -28,13 +28,9 @@
         $category = strtolower($_POST['category']);
       };
       $manager->add_transaction($user_id, $category, $amount);
-
+      header('Location: /account');
     }
-
-
-    $manager = new Manage_Account($pdo);
-
-    // delete transaction
+    // listen to delete transaction request
     if(isset($_POST['delete'])){
       $transaction_id = $_POST['transaction_id'];
       $manager->delete_transaction($user_id, $transaction_id);
@@ -163,7 +159,7 @@
             <label>Amount ($)</label>
             <input type="number" class="form-control" min="0.01" step="0.01" name="amount">
           </div>
-          <input type="submit" name="submit" value="Add Transaction">
+          <input type="submit" name="add" value="Add Transaction" class="btn btn-sm btn-success">
         </form>
       </div>
     </div>
