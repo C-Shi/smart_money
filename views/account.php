@@ -1,15 +1,23 @@
 <?php 
   require "config/db.php";
   require "libs/user_auth.php";
+  require "libs/manage_account.php";
   # PDO query for prepare statment
   session_start();
 
   if(isset($_SESSION['current_user_id'])){
+    // fetch all user information
     $user_id = $_SESSION['current_user_id'];
     $q = 'SELECT * FROM transaction WHERE user_id = ? ORDER BY date DESC';
     $stmt = $pdo->prepare($q);
     $stmt->execute([$user_id]);
     $results = $stmt->fetchAll();
+
+    // fetch all user category
+    $manager = new Manage_Account($pdo);
+    $categories = $manager->fetch_user_category($user_id);
+    
+
   } else {
     // no current user cannot access account page;
     header('Location: /');
@@ -103,18 +111,29 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Add Transaction</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <form action="" method="POST">
+          <div class="form-group">
+            <label>Category</label>
+            <select class="form-control" name="category" id="new-transaction-option">
+              <?php foreach($categories as $category): ?>
+                <option><?php echo $category['name'] ?></option>
+              <?php endforeach ?>
+              <option>New</option>
+            </select>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  var select = document.getElementById("new-transaction-option");
+  alert(select.selectedIndex[-1]);
+</script>
