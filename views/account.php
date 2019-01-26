@@ -1,6 +1,7 @@
 <?php 
   require "config/db.php";
   require "libs/user_auth.php";
+  require "libs/manage_account.php";
   # PDO query for prepare statment
   session_start();
 
@@ -10,6 +11,15 @@
     $stmt = $pdo->prepare($q);
     $stmt->execute([$user_id]);
     $results = $stmt->fetchAll();
+
+    $manager = new Manage_Account($pdo);
+
+    // delete transaction
+    if(isset($_POST['delete'])){
+      $transaction_id = $_POST['transaction_id'];
+      $manager->delete_transaction($user_id, $transaction_id);
+      header('Location: /account');
+    }
   } else {
     // no current user cannot access account page;
     header('Location: /');
@@ -65,14 +75,16 @@
         <table class="table table-hover">
           <colgroup>
             <col span="1" style="width: 20%;" />
-            <col span="1" style="width: 60%;" />
+            <col span="1" style="width: 50%;" />
             <col span="1" style="width: 20%;" />
+            <col span="1" style="width: 10%;" />
           </colgroup>
           <thead>
             <tr>
               <th scope="col">Date</th>
               <th scope="col">Category</th>
               <th scope="col">Amount</th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
@@ -88,6 +100,12 @@
                   ?>
                 </td>
                 <td><?php echo $result['amount'] ?></td>
+                <td>
+                  <form action="/account" method="post">
+                    <input type="hidden" name="transaction_id" value="<?php echo $result['id']; ?>" readonly>
+                    <input type="submit" name="delete" value="Delete" class="btn btn-sm btn-danger">
+                  </form>
+                </td>
               </tr>
             <?php endforeach; ?>
           </tbody>
