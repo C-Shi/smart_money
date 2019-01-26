@@ -16,7 +16,21 @@
     // fetch all user category
     $manager = new Manage_Account($pdo);
     $categories = $manager->fetch_user_category($user_id);
-    
+
+    // listen to post request
+    if(isset($_POST['submit'])){
+      // add new category if exist
+      $amount = $_POST['amount'];
+      if(isset($_POST['newCategory'])){
+        $category = strtolower($_POST['newCategory']);
+        $manager->add_new_category($user_id, $category);
+      } else {
+        $category = strtolower($_POST['category']);
+      };
+      $manager->add_transaction($user_id, $category, $amount);
+
+    }
+
 
   } else {
     // no current user cannot access account page;
@@ -118,15 +132,22 @@
       </div>
       <div class="modal-body">
         <form action="" method="POST">
-          <div class="form-group">
-            <label>Category</label>
-            <select class="form-control" name="category" id="new-transaction-option">
-              <?php foreach($categories as $category): ?>
-                <option><?php echo $category['name'] ?></option>
-              <?php endforeach ?>
-              <option>New</option>
-            </select>
+          <div id="new-form"> 
+            <div class="form-group">
+              <label>Category</label>
+              <select class="form-control" name="category" id="new-transaction-option">
+                <?php foreach($categories as $category): ?>
+                  <option><?php echo $category['name'] ?></option>
+                <?php endforeach ?>
+                <option>New</option>
+              </select>
+            </div>
           </div>
+          <div class="form-group">
+            <label>Amount ($)</label>
+            <input type="number" class="form-control" min="0.01" step="0.01" name="amount">
+          </div>
+          <input type="submit" name="submit" value="Add Transaction">
         </form>
       </div>
     </div>
@@ -135,5 +156,24 @@
 
 <script>
   var select = document.getElementById("new-transaction-option");
-  alert(select.selectedIndex[-1]);
+  select.addEventListener('change', function(e){
+    if(e.target.value === 'New'){
+      var div = document.createElement('div');
+      div.setAttribute('class', 'form-group');
+      div.setAttribute('id', 'newCategoryDiv')
+      var label = document.createElement('label');
+      label.textContent = 'New Category';
+      var input = document.createElement('input');
+      input.setAttribute('type', 'text');
+      input.setAttribute('class', 'form-control');
+      input.setAttribute('name', 'newCategory');
+      input.setAttribute('placeholder', 'New Category');
+      div.appendChild(label);
+      div.appendChild(input);
+      document.getElementById('new-form').appendChild(div);
+    } else {
+      var newCatDiv = document.getElementById('newCategoryDiv');
+      document.getElementById('new-form').removeChild(newCatDiv);
+    }
+  })
 </script>
