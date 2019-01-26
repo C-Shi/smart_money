@@ -4,10 +4,12 @@
   require "libs/manage_account.php";
   # PDO query for prepare statment
   session_start();
+  $user_auth = new User_Auth($pdo);
 
   if(isset($_SESSION['current_user_id'])){
     // fetch all user information
     $user_id = $_SESSION['current_user_id'];
+    $current_user = $user_auth->GET_USER($user_id);
     $q = 'SELECT * FROM transaction WHERE user_id = ? ORDER BY date DESC';
     $stmt = $pdo->prepare($q);
     $stmt->execute([$user_id]);
@@ -16,6 +18,7 @@
     // fetch all user category
     $manager = new Manage_Account($pdo);
     $categories = $manager->fetch_user_category($user_id);
+    $this_month_spent = $manager->get_this_month_spent($user_id);
 
     // listen to add transaction request
     if(isset($_POST['add'])){
@@ -40,8 +43,6 @@
     // no current user cannot access account page;
     header('Location: /');
   }
-
-  $user_auth = new User_Auth($pdo);
   $user_auth->LOGOUT();
 ?>
 
@@ -70,13 +71,24 @@
     <section class="col-md-3">
     <div class="card mb-3">
       <h5 class="card-header bg-primary text-white">Dash Board</h5>
+      <div style="padding: 4px">
+        <img src="<?php echo $current_user['avatar']; ?>" class="card-img-top" alt="user profile">
+      </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item">Profile</li>
+        <li class="list-group-item">
+          <strong>Monthly Budget: </strong>
+          $<?php echo $current_user['budget']; ?>
+        </li>
         <li class="list-group-item">Category <span class="badge badge-dark"><i class="fas fa-angle-double-down"></i></span></li>
         <li class="list-group-item">
-          Monthly Spend
+          <strong>Monthly Spend: </strong> $<?php echo $this_month_spent['total'];?>
+          <!-- this is the progress bar area -->
           <div class="progress">
-            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar progress-bar-striped" role="progressbar" 
+                 style="width: <?php echo $this_month_spent['total']/$current_user['budget'] * 100; ?>%" 
+                 aria-valuenow="<?php echo $this_month_spent['total']/$current_user['budget'] * 100; ?>" 
+                 aria-valuemin="0" aria-valuemax="100">
+            </div>
           </div>
         </li>
       </ul>

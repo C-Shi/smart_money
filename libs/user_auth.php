@@ -36,6 +36,13 @@
       header('Location: /account');
     }
 
+    public function GET_USER($user_id){
+      $q_user = "SELECT * FROM user WHERE id = ?;";
+      $stmt = $this->pdo->prepare($q_user);
+      $stmt->execute([$user_id]);
+      return $stmt->fetch();
+    }
+
     public function LOGOUT(){
       if(isset($_POST['logout'])){
         session_destroy();

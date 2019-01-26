@@ -56,5 +56,15 @@
       $stmt->execute([$transaction_id, $user_id]);
       return True;
     }
+
+    public function get_this_month_spent($user_id){
+      $q_total = "SELECT SUM(amount) AS total FROM transaction 
+                  WHERE user_id = ? AND 
+                  YEAR(date) = YEAR(CURRENT_DATE) AND 
+                  MONTH(date) = MONTH(CURRENT_DATE);";
+      $stmt = $this->pdo->prepare($q_total);
+      $stmt->execute([$user_id]);
+      return $stmt->fetch();
+    }
   }
 ?>
