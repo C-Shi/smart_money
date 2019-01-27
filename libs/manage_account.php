@@ -12,6 +12,24 @@
       return $category_results;
     }
 
+    public function get_recent_transaction($user_id){
+      $q_transaction = 'SELECT * FROM transaction 
+                        WHERE user_id = ? AND YEAR(date) = YEAR(CURRENT_DATE) AND 
+                        MONTH(date) = MONTH(CURRENT_DATE) ORDER BY date DESC LIMIT 15';
+      $stmt = $this->pdo->prepare($q_transaction);
+      $stmt->execute([$user_id]);
+      return $stmt->fetchAll();
+    }
+
+    public function count_transaction_by_category($user_id){
+      $q_get_count = "SELECT category.name, COUNT(*) AS count FROM transaction 
+                      LEFT JOIN category ON category.id = transaction.category_id 
+                      WHERE user_id = ? GROUP BY category_id;";
+      $stmt = $this->pdo->prepare($q_get_count);
+      $stmt->execute([$user_id]);
+      return $stmt->fetchAll();
+    }
+
     public function add_new_category($user_id, $category){
       $q_check_cat_exist = "SELECT * FROM category WHERE name = ?;";
       $stmt = $this->pdo->prepare($q_check_cat_exist);

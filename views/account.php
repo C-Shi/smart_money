@@ -5,18 +5,17 @@
   # PDO query for prepare statment
   session_start();
   $user_auth = new User_Auth($pdo);
+  $manager = new Manage_Account($pdo);
 
   if(isset($_SESSION['current_user_id'])){
     // fetch all user information
     $user_id = $_SESSION['current_user_id'];
     $current_user = $user_auth->GET_USER($user_id);
-    $q = 'SELECT * FROM transaction WHERE user_id = ? ORDER BY date DESC';
-    $stmt = $pdo->prepare($q);
-    $stmt->execute([$user_id]);
-    $results = $stmt->fetchAll();
+    $results = $manager->get_recent_transaction($user_id);
+    $count_category = $manager->count_transaction_by_category($user_id);
+    
 
     // fetch all user category
-    $manager = new Manage_Account($pdo);
     $categories = $manager->fetch_user_category($user_id);
     $this_month_spent = $manager->get_this_month_spent($user_id);
 
@@ -79,7 +78,18 @@
           <strong>Monthly Budget: </strong>
           $<?php echo $current_user['budget']; ?>
         </li>
-        <li class="list-group-item">Category <span class="badge badge-dark"><i class="fas fa-angle-double-down"></i></span></li>
+
+        <li class="list-group-item list-group-item-action" id="toggle-category"><strong>Category</strong> <span class="badge badge-dark float-right"><i class="fas fa-angle-double-down"></i></span></li>
+        
+        <div id="display-category" style="display:none">
+          <?php foreach($count_category as $each_count_category): ?>
+            <li class="list-group-item">
+              <?php echo $each_count_category['name'] ?>:
+              <span class="badge badge-secondary float-right"><?php echo $each_count_category['count'] ?></span>
+            </li>
+          <?php endforeach; ?>
+        </div>
+
         <li class="list-group-item">
           <strong>Monthly Spend: </strong> $<?php echo $this_month_spent['total'];?>
           <!-- this is the progress bar area -->
@@ -199,5 +209,10 @@
       var newCatDiv = document.getElementById('newCategoryDiv');
       document.getElementById('new-form').removeChild(newCatDiv);
     }
+  })
+
+  var toggleCategory = document.getElementById("toggle-category");
+  $('#toggle-category').on('click', function(){
+    $('#display-category').slideToggle();
   })
 </script>
