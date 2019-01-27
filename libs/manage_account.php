@@ -55,16 +55,16 @@
       return True;
     }
 
-    public function add_transaction($user_id, $category, $amount){
+    public function add_transaction($user_id, $category, $date, $amount){
       $q_get_cat_id = "SELECT * FROM category WHERE name = ?;";
       $stmt = $this->pdo->prepare($q_get_cat_id);
       $stmt->execute([$category]);
       $found_category = $stmt->fetch();
       $category_id = $found_category['id'];
-
-      $q_add_transaction = "INSERT INTO transaction (user_id, category_id, amount) VALUES (?, ?, ?);";
+      $transaction_time = $date . ' 00:00:00';
+      $q_add_transaction = "INSERT INTO transaction (user_id, category_id, date, amount) VALUES (?, ?, ?, ?);";
       $stmt = $this->pdo->prepare($q_add_transaction);
-      $stmt->execute([$user_id, $category_id, $amount]);
+      $stmt->execute([$user_id, $category_id, $transaction_time, $amount]);
       return True;
     }
 

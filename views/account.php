@@ -23,13 +23,14 @@
     if(isset($_POST['add'])){
       // add new category if exist
       $amount = $_POST['amount'];
+      $date = $_POST['date'];
       if(isset($_POST['newCategory'])){
         $category = strtolower($_POST['newCategory']);
         $manager->add_new_category($user_id, $category);
       } else {
         $category = strtolower($_POST['category']);
       };
-      $manager->add_transaction($user_id, $category, $amount);
+      $manager->add_transaction($user_id, $category, $date, $amount);
       header('Location: /account');
     }
     // listen to delete transaction request
@@ -91,7 +92,7 @@
         </div>
 
         <li class="list-group-item">
-          <strong>Monthly Spend: </strong> $<?php echo $this_month_spent['total'];?>
+          <strong>Monthly Spend: </strong> $<?php echo round($this_month_spent['total']);?>
           <!-- this is the progress bar area -->
           <div class="progress">
             <div class="progress-bar progress-bar-striped" role="progressbar" 
@@ -166,6 +167,7 @@
       </div>
       <div class="modal-body">
         <form action="" method="POST">
+          <!-- input for category -->
           <div id="new-form"> 
             <div class="form-group">
               <label>Category</label>
@@ -177,6 +179,15 @@
               </select>
             </div>
           </div>
+          <!-- input for time -->
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date"
+                  class="form-control"
+                  name="date" 
+                  value="<?php echo date('Y-m-d'); ?>">
+          </div>
+          <!-- input for amount -->
           <div class="form-group">
             <label>Amount ($)</label>
             <input type="number" class="form-control" min="0.01" step="0.01" name="amount">
@@ -188,31 +199,4 @@
   </div>
 </div>
 
-<script>
-  var select = document.getElementById("new-transaction-option");
-  select.addEventListener('change', function(e){
-    if(e.target.value === 'New'){
-      var div = document.createElement('div');
-      div.setAttribute('class', 'form-group');
-      div.setAttribute('id', 'newCategoryDiv')
-      var label = document.createElement('label');
-      label.textContent = 'New Category';
-      var input = document.createElement('input');
-      input.setAttribute('type', 'text');
-      input.setAttribute('class', 'form-control');
-      input.setAttribute('name', 'newCategory');
-      input.setAttribute('placeholder', 'New Category');
-      div.appendChild(label);
-      div.appendChild(input);
-      document.getElementById('new-form').appendChild(div);
-    } else {
-      var newCatDiv = document.getElementById('newCategoryDiv');
-      document.getElementById('new-form').removeChild(newCatDiv);
-    }
-  })
-
-  var toggleCategory = document.getElementById("toggle-category");
-  $('#toggle-category').on('click', function(){
-    $('#display-category').slideToggle();
-  })
-</script>
+<script src="static/js/account.js"></script>
