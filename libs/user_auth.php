@@ -49,6 +49,20 @@
         header('Location: /');
       }
     }
+
+    public function update_user_budget($user_id, $budget){
+      $q_budget = "UPDATE user SET budget = ? WHERE id = ?;";
+      $stmt = $this->pdo->prepare($q_budget);
+      $stmt->execute([$budget, $user_id]);
+      return True;
+    }
+
+    public function update_user_avatar($user_id, $avatar){
+      $q_avatar = "UPDATE user SET avatar = ? WHERE id = ?;";
+      $stmt = $this->pdo->prepare($q_avatar);
+      $stmt->execute([$avatar, $user_id]);
+      return True;
+    }
   }
 
 ?>

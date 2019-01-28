@@ -7,14 +7,22 @@
   session_start();
   $user_auth = new User_Auth($pdo);
   $manager = new Manage_Account($pdo);
+  $profile = new Manage_Profile($pdo);
 
   if (!isset($_SESSION['current_user_id'])){
     header('Location: /');
   }
+
   $user_id = $_SESSION['current_user_id'];
   $current_user = $user_auth->GET_USER($user_id);
 
-  $profile = new Manage_Profile($pdo);
+  if(isset($_POST['update'])){
+    $budget = $_POST['budget'];
+    $avatar = $_POST['avatar'];
+    $user_auth->update_user_budget($user_id, $budget);
+    $user_auth->update_user_avatar($user_id, $avatar);
+    header('Location: /account');
+  }
 
   $user_sum = $profile->sum_all_transaction($user_id);
   $user_spent = $profile->spent_analytics($user_id);
@@ -22,8 +30,18 @@
 ?>
 
 <?php include "inc/header.php" ?>
+<div class="container-fluid bg-secondary" style="margin-bottom: 20px; padding: 10px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <h3>User Profile</h3>
+      </div>
+    </div>
+  </div>
+</div>
 
 <main class="container">
+
   <div class="row">
     <!-- profile picture -->
     <div class="col-md-4">
@@ -50,11 +68,11 @@
             </div>
             <div class="form-group">
               <label>Monthly Budget</label>
-              <input class="form-control" type="number" value="<?php echo $current_user['budget']; ?>">
+              <input class="form-control" name="budget" type="number" value="<?php echo $current_user['budget']; ?>">
             </div>
             <div class="form-group">
               <label>Avatar URL</label>
-                <input class="form-control" type="text" value="<?php echo $current_user['avatar']; ?>">
+                <input class="form-control" name="avatar" type="text" value="<?php echo $current_user['avatar']; ?>">
               </label>
             </div>
             <input type="submit" class="btn btn-success" name="update" value="Update" />

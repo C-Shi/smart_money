@@ -70,7 +70,10 @@
   <!-- dashboard section -->
     <section class="col-md-3">
     <div class="card mb-3">
-      <h5 class="card-header bg-primary text-white">Dash Board</h5>
+      <h3 class="card-header bg-primary text-white">
+        Profile
+        <a href="/profile" class="float-right btn btn-sm btn-warning">View/Edit</a>
+      </h3>
       <div style="padding: 4px">
         <img src="<?php echo $current_user['avatar']; ?>" class="card-img-top" alt="user profile">
       </div>
