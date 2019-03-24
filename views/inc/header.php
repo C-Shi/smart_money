@@ -60,7 +60,7 @@
       </ul>
       <form class="form-inline my-2 my-lg-0" method="POST" action="/account">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item">Welcome! <?php echo $_SESSION['current_user_email']?></li>
+          <li class="nav-item"id="user" data-user-id="<?php echo $_SESSION['current_user_id'] ?>">Welcome! <?php echo $_SESSION['current_user_email']?></li>
         </ul>
         &nbsp;
         <input class="btn btn-secondary my-2 my-sm-0" type="submit" value="Logout" name="logout">

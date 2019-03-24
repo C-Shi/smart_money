@@ -114,7 +114,7 @@
       <!-- Recent transction section showing this mongth -->
       <div class="card mb-3">
         <h5 class="card-header bg-primary text-white">Recent Transaction</h5>
-        <table class="table table-hover">
+        <table class="table table-hover text-center">
           <colgroup>
             <col span="1" style="width: 20%;" />
             <col span="1" style="width: 50%;" />
@@ -157,7 +157,7 @@
       <!-- All Previous transation-->
       <div class="card mb-3">
         <h5 class="card-header bg-primary text-white" id="previousMonth">&nbsp;</h5>
-        <table class="table table-hover">
+        <table class="table table-hover text-center">
           <colgroup>
             <col span="1" style="width: 20%;" />
             <col span="1" style="width: 50%;" />
@@ -172,45 +172,31 @@
               <th scope="col"></th>
             </tr>
           </thead>
-          <tbody>
-            <?php foreach($results as $result): ?>
-              <tr>
-                <td scope="row"><?php echo explode(' ', $result['date'])[0]?></td>
-                <td>
-                  <?php
-                    $cat_q = 'SELECT name FROM category WHERE id = ' . $result['category_id'];
-                    $stmt_cat = $pdo->query($cat_q);
-                    $cat_name = $stmt_cat->fetch();
-                    echo $cat_name['name'];
-                  ?>
-                </td>
-                <td><?php echo $result['amount'] ?></td>
-                <td>
+          <tbody class="previous-transaction">
+            <tr id="month-hidden" class="d-none">
+              <td scope="row"></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>
                   <form action="/account" method="post">
-                    <input type="hidden" name="transaction_id" value="<?php echo $result['id']; ?>" readonly>
+                    <input type="hidden" name="transaction_id" value="" readonly>
                     <input type="submit" name="delete" value="Delete" class="btn btn-sm btn-danger">
                   </form>
-                </td>
-              </tr>
-            <?php endforeach; ?>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
       <!-- All Previous transaction-->
       <!-- pagnation section -->
-      <div class='col-md-9'>
+      <div class='col-md-9 mx-auto'>
         <ul class="pagination">
-          <li class="page-item disabled">
-            <a class="page-link" href="#">&laquo;</a>
-          </li>
           <?php for ($i = 1; $i <= 11; $i++) { ?>
             <li class="page-item month">
               <a class="page-link" href="#" id="<?php echo $i ?>"><?php echo $i ?></a>
             </li>
           <?php } ?>
-          <li class="page-item">
-            <a class="page-link" href="#">&raquo;</a>
-          </li>
         </ul>
       </div>
       <!-- end of pagnation section -->
@@ -264,25 +250,4 @@
 </div>
 
 <script src="static/js/account.js"></script>
-<script>
-  $(document).ready(function(){
-    var date = new Date();
-    var currentMonth = date.getMonth();
-    var displayMonthName = GetMonthName(currentMonth - 1);
-    $('#previousMonth').text(displayMonthName);
-
-
-    function GetMonthName(monthNumber) {
-      monthNumber = monthNumber < 0 ? monthNumber + 12 : monthNumber;
-      var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-      return months[monthNumber];
-    }
-
-    $('.month a').on('click', function(e) {
-      var month = Number($(this).attr('id'));
-      displayMonthName = GetMonthName(currentMonth - month);
-      $('#previousMonth').text(displayMonthName);
-    })
- 
-  })
-</script>
+<script src="static/js/getOldRecord.js"></script>
