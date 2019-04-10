@@ -70,6 +70,16 @@
       return True;
     }
 
+    public function verify_password_reset($email, $token) {
+      $q = "SELECT password_reset_token, password_reset_token_expiry FROM user WHERE email = ?";
+      $stmt = $this->pdo->prepare($q);
+      $stmt->execute([$email]);
+      $user = $stmt->fetch();
+      if ($token != $user->password_reset_token) {
+        return false;
+      }
+    }
+
     public function check_password_strength($password) {
       if (strlen($password) < 6) {
         return 'Password must be at least 6 character';

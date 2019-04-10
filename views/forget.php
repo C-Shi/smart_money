@@ -17,7 +17,9 @@
     unset($_POST['email']);
     if (isset($token)) {
       // sending email using this token!!
-      send_email();
+      $text = email_constructor('Your Password Reset Token Is: ' . $token, 'text');
+      $html = email_constructor('Your Password Reset Token Is: ' . $token, 'html');
+      send_email($email, $text, $html);
       echo 'Your Secret Password Reset Link Has Been Sent To Your Email';
     } else {
       header("HTTP/1.0 500");
@@ -54,6 +56,7 @@
             <div class="alert alert-danger d-none" role="alert"></div>
           </div>
           <button class="btn btn-block btn-primary">Reset Password</button>
+          <a href="/reset" class="text-dark">Already Have Token? Reset Here</a>
         </form>
       </div>
     </div>

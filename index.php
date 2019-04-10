@@ -17,6 +17,10 @@
     include 'views/forget.php';
   };
 
+  $router['/reset'] = function (){
+    include 'views/reset.php';
+  };
+
   if(isset($_SERVER['REQUEST_URI'])){
     $uri = $_SERVER['REQUEST_URI'];
     if ($router[$uri]){

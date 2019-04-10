@@ -5,15 +5,24 @@
     $dotenv->load();
   }
 
-  function send_email(){
+  function send_email($to, $text, $html){
     $key = getenv('SENDGRID_API');
+    $sender = getenv('EMAIL_SENDER');
     $email = new \SendGrid\Mail\Mail();
-    $email->setFrom('test@example.com', "Example User");
+    $email->setFrom($sender, "Admin");
     $email->setSubject("Sending Sample Email");
-    $email->addTo('kyleshi82@gmail.com', "Example User");
-    $email->addContent('text/plain', 'this is a sample email');
-    $email->addContent('text/html', "<strong>and easy to do anywhere, even with PHP</strong>");
+    $email->addTo($to);
+    $email->addContent('text/plain', $text);
+    $email->addContent('text/html', $html);
     $sendgrid = new \SendGrid($key);
     $sendgrid->send($email);
+  }
+
+  function email_constructor($text, $option){
+    if ($option === 'text') {
+      return 'Hello, \n' . $text . '\n Sincerely, \n Smart Money Admin';
+    } else {
+      return '<h3>Smart Money Just Sent You A Email</h3>' . '<strong>' . $text . '</strong>';
+    }
   }
 ?>
