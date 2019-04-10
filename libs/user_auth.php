@@ -89,6 +89,15 @@
 
       return false;
     }
+
+    public function generate_reset_token($email) {
+      $token = bin2hex(random_bytes(48));
+      $token_expiry = date("Y-m-d H:i:s", time() + 3600000);
+      $q_create_token = "UPDATE user SET password_reset_token = ?, password_reset_token_expiry = ? WHERE id = 3;";
+      $stmt = $this->pdo->prepare($q_create_token);
+      $stmt->execute([$token, $token_expiry]);
+      return $token;
+    }
   }
 
 ?>

@@ -2,6 +2,8 @@
   require 'config/db.php';
   require 'libs/user_auth.php';
 
+  $user_auth = new USER_AUTH($pdo);
+
   session_start();
   if($_SESSION['current_user_id']) {
     header['Location: /account'];
@@ -9,8 +11,17 @@
 
   // handle reset post request
   if(isset($_POST['email'])) {
-    echo 'Hi';
+    $email = $_POST['email'];
+    $token = $user_auth->generate_reset_token($email);
     unset($_POST['email']);
+    if (isset($token)) {
+      // sending email using this token!!
+      echo 'Your Secret Password Reset Link Has Been Sent To Your Email';
+    } else {
+      header("HTTP/1.0 500");
+      echo ('Server Error! Cannot Set Password Reset Token');
+    }
+    exit(0);
   }
 ?>
 <html>
@@ -36,6 +47,10 @@
             <label>Email:</label>
             <input type="text" class="form-control" placeholder="Your Email" name="email">
           </div>
+          <div class="form-group">
+            <div class="alert alert-warning d-none" role="alert"></div>
+            <div class="alert alert-danger d-none" role="alert"></div>
+          </div>
           <button class="btn btn-block btn-primary">Reset Password</button>
         </form>
       </div>
@@ -50,10 +65,15 @@
           data: {email: email}
         })
         .done(function(response){
-          console.log('hi')
+          $('.alert-warning').removeClass('d-none');
+          $('.alert-warning').text(response);
+          setTimeout(function(){
+            window.location.href = "/"
+          }, 3000)
         })
-        .fail(function(respnose, status, xhr){
-
+        .fail(function(response, status, xhr){
+          $('.alert-danger').removeClass('d-none');
+          $('.alert-danger').text(response.responseText);
         })
       })
     </script>
