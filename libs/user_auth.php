@@ -13,9 +13,14 @@
         echo "<script>alert('user exist! Please login')</script>";
         return FALSE;
       } else {
+        $password_validation_error = $this->check_password_strength($password);
+        if ($password_validation_error) {
+          return $password_validation_error;
+        }
+        $hash = password_hash($password, PASSWORD_DEFAULT);
         $q_add_user = "INSERT INTO user (email, password) VALUE (? , ?)";
         $stmt = $this->pdo->prepare($q_add_user);
-        $stmt->execute([$email, $password]);
+        $stmt->execute([$email, $hash]);
         $this->LOGIN($email, $password);
         return TRUE;
       }
@@ -28,7 +33,8 @@
         $stmt->execute([$email]);
         $found_user = $stmt->fetch();
   
-      if ($password === $found_user['password']){
+      $hash = $found_user['password'];
+      if(password_verify($password, $hash)){
         session_start();
         $_SESSION['current_user_id'] = htmlentities($found_user['id']);
         $_SESSION['current_user_email'] = htmlentities($found_user['email']);
@@ -62,6 +68,26 @@
       $stmt = $this->pdo->prepare($q_avatar);
       $stmt->execute([$avatar, $user_id]);
       return True;
+    }
+
+    public function check_password_strength($password) {
+      if (strlen($password) < 6) {
+        return 'Password must be at least 6 character';
+      }
+      
+      if (!preg_match("#[0-9]+#", $password)) {
+        return 'Password must contain at least one number';
+      }
+
+      if (!preg_match("#[a-z]+#", $password)) {
+        return 'Password must contain at least one lowercase letter';
+      }
+
+      if(!preg_match("#[A-Z]+#", $password)) {
+        return 'Password must contain at least one uppercase letter';
+      }
+
+      return false;
     }
   }
 
