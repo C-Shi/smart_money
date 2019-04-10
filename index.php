@@ -13,6 +13,10 @@
     include 'views/profile.php';
   };
 
+  $router['/forget'] = function(){
+    include 'views/forget.php';
+  };
+
   if(isset($_SERVER['REQUEST_URI'])){
     $uri = $_SERVER['REQUEST_URI'];
     if ($router[$uri]){

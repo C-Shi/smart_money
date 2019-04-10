@@ -53,7 +53,8 @@
         <label><strong>Password: &nbsp;</strong></label>
         <input class="form-control mr-sm-2" type="password" name="password" placeholder="******">
         <input class="btn btn-secondary my-2 my-sm-0" type="submit" value="Login" name="login">
-      </form>
+      </form> &nbsp;
+      <a class="btn btn-warning my-2 my-sm-0" href="/forget">Forget<a>
     </div>
   </nav>
   <!-- end of navigation bar -->
