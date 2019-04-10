@@ -18,7 +18,7 @@
     $new_email = $_POST['new_email'];
     $new_password = $_POST['new_password'];
     $register_state = $user_auth->REGISTER($new_email, $new_password);
-    echo gettype($register_state);
+    echo $register_state;
     if (!$register_state){
       unset($_POST['new_email']);
       unset($_POST['new_password']);

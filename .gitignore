@@ -1,3 +1,4 @@
 # ignore all git ignore file
+.env
 
 .DS_Store

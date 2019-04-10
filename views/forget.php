@@ -1,6 +1,7 @@
 <?php 
   require 'config/db.php';
   require 'libs/user_auth.php';
+  require 'libs/email_helper.php';
 
   $user_auth = new USER_AUTH($pdo);
 
@@ -16,6 +17,7 @@
     unset($_POST['email']);
     if (isset($token)) {
       // sending email using this token!!
+      send_email();
       echo 'Your Secret Password Reset Link Has Been Sent To Your Email';
     } else {
       header("HTTP/1.0 500");
