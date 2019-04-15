@@ -75,9 +75,15 @@
       $stmt = $this->pdo->prepare($q);
       $stmt->execute([$email]);
       $user = $stmt->fetch();
-      if ($token != $user->password_reset_token) {
+      if ($token != $user['password_reset_token']) {
         return false;
       }
+      $now = date("Y-m-d H:i:s", time());
+      if (var_dump($now > $user['password_reset_token_expiry'])) {
+        return false;
+      }
+      return true;
+      
     }
 
     public function check_password_strength($password) {
@@ -103,11 +109,24 @@
     public function generate_reset_token($email) {
       $token = bin2hex(random_bytes(48));
       $token_expiry = date("Y-m-d H:i:s", time() + 3600000);
-      $q_create_token = "UPDATE user SET password_reset_token = ?, password_reset_token_expiry = ? WHERE id = 3;";
+      $q_create_token = "UPDATE user SET password_reset_token = ?, password_reset_token_expiry = ? WHERE email = ?;";
       $stmt = $this->pdo->prepare($q_create_token);
-      $stmt->execute([$token, $token_expiry]);
+      $stmt->execute([$token, $token_expiry, $email]);
       return $token;
     }
+
+    public function update_password($email, $password) {
+      $hash = password_hash($password, PASSWORD_DEFAULT);
+      $q_reset_password = "UPDATE user SET password = ?, password_reset_token = NULL, password_reset_token_expiry = NULL WHERE email = ?;";
+      $stmt = $this->pdo->prepare($q_reset_password);
+      $stmt->execute([$hash, $email]);
+      $q_check = "SELECT * FROM user WHERE email = ?;";
+      $stmt = $this->pdo->prepare($q_check);
+      $stmt->execute([$email]);
+      $user = $stmt->fetch();
+      return $user;
+    }
+
   }
 
 ?>
